@@ -1,60 +1,41 @@
 @echo off
 chcp 65001 >nul
-title NAEBALOVO 🥷
+title NAEBALOVO 🥷 НИНДЗЯ СТЕЛС
 
-echo [naebalovo] NINJA STEALTH - МАКСИМАЛЬНАЯ СКРЫТНОСТЬ 🥷 [ТОП-1]
+set "ROOT_DIR=%~dp0.."
+cd /d "%ROOT_DIR%\core\Uberi_Ruki"
 
 :: Проверка прав администратора
 net session >nul 2>&1
-if %errorLevel% neq 0 (
-    echo ❌ Требуются права администратора для запуска обхода!
-    timeout /t 3 >nul
-    exit /b
-)
-
-:: Переход в директорию Uberi_Ruki
-cd /d "%~dp0..\core\Uberi_Ruki\"
+if %errorLevel% neq 0 exit /b
 
 :: Проверка существования winws.exe
-if not exist "winws.exe" (
-    echo ❌ Ошибка: winws.exe не найден!
+if not exist "winws.exe" exit /b
+
+:: Останавливаем предыдущие экземпляры
+taskkill /f /im winws.exe >nul 2>&1
+
+:: Создаем временный файл с командой
+set "TEMP_BAT=%TEMP%\ninja_%RANDOM%.bat"
+
+(
+echo @echo off
+echo winws.exe --wf-tcp=80,443,2053,2083,2087,2096,8443 --wf-udp=443,3478-3481,50000-65535 ^
+echo --filter-udp=443 --hostlist="..\files\sites.txt.gz" --ipset="..\files\ipv4.txt.gz" --ipset="..\files\ipv6.txt.gz" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="bin\quic_initial_www_google_com.bin" --new ^
+echo --filter-udp=3478-3481,50000-65535 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-repeats=6 --new ^
+echo --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=^! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
+echo --filter-tcp=443 --hostlist="..\files\sites.txt.gz" --ip-id=zero --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=^! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
+echo --filter-tcp=80,443 --hostlist="..\files\sites.txt.gz" --ipset="..\files\ipv4.txt.gz" --ipset="..\files\ipv6.txt.gz" --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=^! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
+echo --filter-udp=443 --ipset="..\files\ipv4.txt.gz" --ipset="..\files\ipv6.txt.gz" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="bin\quic_initial_www_google_com.bin" --new ^
+echo --filter-tcp=80,443 --ipset="..\files\ipv4.txt.gz" --ipset="..\files\ipv6.txt.gz" --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=^! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^
+echo --filter-udp=3478-3481,50000-65535 --ipset="..\files\ipv4.txt.gz" --ipset="..\files\ipv6.txt.gz" --dpi-desync=fake --dpi-desync-autottl=2 --dpi-desync-repeats=10 --dpi-desync-any-protocol=1 --dpi-desync-fake-unknown-udp="bin\quic_initial_www_google_com.bin" --dpi-desync-cutoff=n2
+) > "%TEMP_BAT%"
+
+:: Запускаем скрыто через PowerShell
+if exist "%TEMP_BAT%" (
+    powershell -WindowStyle Hidden -Command "Start-Process -FilePath 'cmd.exe' -ArgumentList '/c \"\"%TEMP_BAT%\"\"' -WindowStyle Hidden" >nul 2>&1
     timeout /t 2 >nul
-    exit /b
+    del "%TEMP_BAT%" >nul 2>&1
 )
 
-:: СОЗДАЕМ ВРЕМЕННЫЙ BAT ФАЙЛ ДЛЯ ЗАПУСКА
-echo @echo off > ninja_temp.bat
-echo winws.exe --wf-tcp=80,443,2053,2083,2087,2096,8443 --wf-udp=443,3478-3481,50000-65535 ^^>> ninja_temp.bat
-echo --filter-udp=443 --hostlist="..\files\sites.txt.gz" --ipset="..\files\ipv4.txt.gz" --ipset="..\files\ipv6.txt.gz" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="bin\quic_initial_www_google_com.bin" --new ^^>> ninja_temp.bat
-echo --filter-udp=3478-3481,50000-65535 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-repeats=6 --new ^^>> ninja_temp.bat
-echo --filter-tcp=2053,2083,2087,2096,8443 --hostlist-domains=discord.media --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=^^! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^^>> ninja_temp.bat
-echo --filter-tcp=443 --hostlist="..\files\sites.txt.gz" --ip-id=zero --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=^^! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^^>> ninja_temp.bat
-echo --filter-tcp=80,443 --hostlist="..\files\sites.txt.gz" --ipset="..\files\ipv4.txt.gz" --ipset="..\files\ipv6.txt.gz" --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=^^! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^^>> ninja_temp.bat
-echo --filter-udp=443 --ipset="..\files\ipv4.txt.gz" --ipset="..\files\ipv6.txt.gz" --dpi-desync=fake --dpi-desync-repeats=11 --dpi-desync-fake-quic="bin\quic_initial_www_google_com.bin" --new ^^>> ninja_temp.bat
-echo --filter-tcp=80,443 --ipset="..\files\ipv4.txt.gz" --ipset="..\files\ipv6.txt.gz" --dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=^^! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --new ^^>> ninja_temp.bat
-echo --filter-udp=3478-3481,50000-65535 --ipset="..\files\ipv4.txt.gz" --ipset="..\files\ipv6.txt.gz" --dpi-desync=fake --dpi-desync-autottl=2 --dpi-desync-repeats=10 --dpi-desync-any-protocol=1 --dpi-desync-fake-unknown-udp="bin\quic_initial_www_google_com.bin" --dpi-desync-cutoff=n2 >> ninja_temp.bat
-
-:: ЗАПУСКАЕМ ЧЕРЕЗ POWERSHELL СКРЫТО
-powershell -WindowStyle Hidden -Command "Start-Process -FilePath 'cmd.exe' -ArgumentList '/c ninja_temp.bat' -WindowStyle Hidden"
-
-:: Ждем и удаляем временный файл
-timeout /t 2 >nul
-del ninja_temp.bat >nul 2>&1
-
-:: Проверяем запустился ли процесс
-tasklist /fi "imagename eq winws.exe" | find /i "winws.exe" >nul
-if errorlevel 1 (
-    echo ❌ winws.exe не запустился!
-    echo 💡 Пробуем альтернативный метод...
-    
-    :: Альтернативный метод через VBScript
-    echo Set WshShell = CreateObject("WScript.Shell") > ninja_launch.vbs
-    echo WshShell.CurrentDirectory = "%cd%" >> ninja_launch.vbs
-    echo WshShell.Run "cmd /c winws.exe --filter-tcp=443 --dpi-desync=fake --new", 0, False >> ninja_launch.vbs
-    wscript.exe //B ninja_launch.vbs
-    del ninja_launch.vbs >nul 2>&1
-) else (
-    echo ✅ Naebalovo Ninja Stealth запущен и работает!
-)
-
-timeout /t 1 >nul
+exit

@@ -4,9 +4,20 @@ mode con: cols=70 lines=25
 title NAEBALOVO 😎
 setlocal enabledelayedexpansion
 
-:: Сохраняем текущий путь
+:: 🔥 КРИТИЧНО ВАЖНО: Сохраняем корневую директорию ДО всего!
 set "ROOT_DIR=%~dp0"
 cd /d "%ROOT_DIR%"
+
+:: 🔥 ВАЖНО: Если это автозапуск, запускаем в СКРЫТОМ режиме
+if "%~1"=="--autostart-hidden" (
+    :: Уже скрытый запуск - выполняем работу
+    goto autostart_launch_hidden
+)
+
+if "%~1"=="--autostart" (
+    :: Устаревший параметр - переходим на новый
+    goto autostart_launch_hidden
+)
 
 :: 🔥 ПРОВЕРКА ПРАВ АДМИНИСТРАТОРА И ПЕРЕЗАПУСК
 net session >nul 2>&1
@@ -20,21 +31,6 @@ if %errorLevel% neq 0 (
     :: Перезапуск с повышенными правами
     powershell -Command "Start-Process '%~f0' -Verb RunAs"
     exit /b
-)
-
-:: 🔄 Автозапуск при старте
-if "%~1"=="--autostart" (
-    echo 🔄 Режим автозапуска активирован...
-    if exist "tools\autostart_config.txt" (
-        set /p autostart_method=<tools\autostart_config.txt
-        echo 🚀 Автозапуск метода: !autostart_method!
-        timeout /t 2 >nul
-        goto autostart_launch
-    ) else (
-        echo ❌ Конфигурация автозапуска не найдена!
-        timeout /t 3 >nul
-        exit /b
-    )
 )
 
 echo ✅ Права администратора подтверждены!
@@ -101,7 +97,7 @@ if !rnd!==3 echo 🙄 Ты серьезно? Давай по-взрослому,
 if !rnd!==4 echo 🤨 И что это за цифра? У нас тут только 0-4!
 if !rnd!==5 echo 😒 Ну вот, опять мимо... Попробуй еще раз, только внимательнее!
 if !rnd!==6 echo 🥴 Ты что, на клавиатуру сел? Выбирай правильно!
-if !rnd!==7 echo 🤪 Ой-ой-ой! Неверный выбор! Роскомнадзор хохочет!
+if !rnd!==7 echo 🤪 Ой-ой-ой! Неверный выбор! Рокомнадзор хохочет!
 if !rnd!==8 echo 🧌 Эй, тролль, хватит баловаться! Выбирай 0-4!
 if !rnd!==9 echo 🎯 Мимо! Попробуй попасть в диапазон 0-4!
 if !rnd!==10 echo 🚫 Нет-нет-нет, так не пойдет! Только 0,1,2,3,4!
@@ -128,7 +124,7 @@ echo     • Максимальное количество повторов (11)
 echo     • Наиболее агрессивный против современных DPI
 echo.
 echo 🥈 2. Ультра хакер [ТОП-2] - агрессивный обход  
-echo     • Гибкая комбинация fake TLS с разными шаблонами
+echo     • Гибкая комбинация fake TLS с разными шаблоны
 echo     • Поддержка случайной генерации TLS
 echo     • Хороший баланс эффективности и стабильности
 echo.
@@ -148,20 +144,110 @@ echo.
 set /p method="🎯 ВЫБЕРИ ОРУЖИЕ [1-7]: "
 
 if "!method!"=="1" (
-    goto launch_method_1
+    cls
+    echo.
+    echo 🥷 Запускаем ниндзя стелс [ТОП-1]...
+    echo.
+    set /p autostart_ask="🎯 Добавить этот метод в автозапуск? (Y/N): "
+    if /i "!autostart_ask!"=="Y" (
+        echo !method! > "tools\autostart_config.txt"
+        echo ✅ Метод 1 добавлен в автозапуск!
+        timeout /t 2 >nul
+    ) else (
+        call :remove_autostart_silent
+        echo ℹ️ Автозапуск не настроен.
+        timeout /t 1 >nul
+    )
+    call :stop_silent
+    timeout /t 2 >nul
+    call :launch_method_direct "tishe\naebalovo_ninja_stealth.bat" "Ниндзя стелс"
+    goto main
 )
+
 if "!method!"=="2" (
-    goto launch_method_2
+    cls
+    echo.
+    echo 💥 Запускаем ультра хакер [ТОП-2]...
+    echo.
+    set /p autostart_ask="🎯 Добавить этот метод в автозапуск? (Y/N): "
+    if /i "!autostart_ask!"=="Y" (
+        echo !method! > "tools\autostart_config.txt"
+        echo ✅ Метод 2 добавлен в автозапуск!
+        timeout /t 2 >nul
+    ) else (
+        call :remove_autostart_silent
+        echo ℹ️ Автозапуск не настроен.
+        timeout /t 1 >nul
+    )
+    call :stop_silent
+    timeout /t 2 >nul
+    call :launch_method_direct "tishe\naebalovo_ultra_split_hacker.bat" "Ультра хакер"
+    goto main
 )
+
 if "!method!"=="3" (
-    goto launch_method_3
+    cls
+    echo.
+    echo 🧠 Запускаем мега фейк гуру [ТОП-3]...
+    echo.
+    set /p autostart_ask="🎯 Добавить этот метод в автозапуск? (Y/N): "
+    if /i "!autostart_ask!"=="Y" (
+        echo !method! > "tools\autostart_config.txt"
+        echo ✅ Метод 3 добавлен в автозапуск!
+        timeout /t 2 >nul
+    ) else (
+        call :remove_autostart_silent
+        echo ℹ️ Автозапуск не настроен.
+        timeout /t 1 >nul
+    )
+    call :stop_silent
+    timeout /t 2 >nul
+    call :launch_method_direct "tishe\naebalovo_mega_fake_guru.bat" "Мега фейк гуру"
+    goto main
 )
+
 if "!method!"=="4" (
-    goto launch_method_4
+    cls
+    echo.
+    echo ⚡ Запускаем молния геймера...
+    echo.
+    set /p autostart_ask="🎯 Добавить этот метод в автозапуск? (Y/N): "
+    if /i "!autostart_ask!"=="Y" (
+        echo !method! > "tools\autostart_config.txt"
+        echo ✅ Метод 4 добавлен в автозапуск!
+        timeout /t 2 >nul
+    ) else (
+        call :remove_autostart_silent
+        echo ℹ️ Автозапуск не настроен.
+        timeout /t 1 >nul
+    )
+    call :stop_silent
+    timeout /t 2 >nul
+    call :launch_method_direct "tishe\naebalovo_lightning_gamer.bat" "Молния геймера"
+    goto main
 )
+
 if "!method!"=="5" (
-    goto launch_method_5
+    cls
+    echo.
+    echo 🚜 Запускаем турбо чайник...
+    echo.
+    set /p autostart_ask="🎯 Добавить этот метод в автозапуск? (Y/N): "
+    if /i "!autostart_ask!"=="Y" (
+        echo !method! > "tools\autostart_config.txt"
+        echo ✅ Метод 5 добавлен в автозапуск!
+        timeout /t 2 >nul
+    ) else (
+        call :remove_autostart_silent
+        echo ℹ️ Автозапуск не настроен.
+        timeout /t 1 >nul
+    )
+    call :stop_silent
+    timeout /t 2 >nul
+    call :launch_method_direct "tishe\naebalovo_turbo_chaynik.bat" "Турбо чайник"
+    goto main
 )
+
 if "!method!"=="6" (
     goto launch_quantum_naebalovo
 )
@@ -189,101 +275,6 @@ if !rnd!==14 echo 🎪 Цирк уехал, а ты все еще не выбр�
 
 timeout /t 1 >nul
 goto methods
-
-:launch_method_1
-cls
-echo.
-echo 🥷 Запускаем ниндзя стелс [ТОП-1]...
-echo.
-set /p autostart_ask="🎯 Добавить этот метод в автозапуск? (Y/N): "
-if /i "!autostart_ask!"=="Y" (
-    call :setup_autostart "1"
-    echo ✅ Метод 1 добавлен в автозапуск!
-) else (
-    call :remove_autostart_silent
-    echo ℹ️ Автозапуск не настроен.
-)
-timeout /t 1 >nul
-call :stop_silent
-timeout /t 1 >nul
-call :launch_method_direct "tishe\naebalovo_ninja_stealth.bat" "Ниндзя стелс"
-goto main
-
-:launch_method_2
-cls
-echo.
-echo 💥 Запускаем ультра хакер [ТОП-2]...
-echo.
-set /p autostart_ask="🎯 Добавить этот метод в автозапуск? (Y/N): "
-if /i "!autostart_ask!"=="Y" (
-    call :setup_autostart "2"
-    echo ✅ Метод 2 добавлен в автозапуск!
-) else (
-    call :remove_autostart_silent
-    echo ℹ️ Автозапуск не настроен.
-)
-timeout /t 1 >nul
-call :stop_silent
-timeout /t 1 >nul
-call :launch_method_direct "tishe\naebalovo_ultra_split_hacker.bat" "Ультра хакер"
-goto main
-
-:launch_method_3
-cls
-echo.
-echo 🧠 Запускаем мега фейк гуру [ТОП-3]...
-echo.
-set /p autostart_ask="🎯 Добавить этот метод в автозапуск? (Y/N): "
-if /i "!autostart_ask!"=="Y" (
-    call :setup_autostart "3"
-    echo ✅ Метод 3 добавлен в автозапуск!
-) else (
-    call :remove_autostart_silent
-    echo ℹ️ Автозапуск не настроен.
-)
-timeout /t 1 >nul
-call :stop_silent
-timeout /t 1 >nul
-call :launch_method_direct "tishe\naebalovo_mega_fake_guru.bat" "Мега фейк гуру"
-goto main
-
-:launch_method_4
-cls
-echo.
-echo ⚡ Запускаем молнию геймера...
-echo.
-set /p autostart_ask="🎯 Добавить этот метод в автозапуск? (Y/N): "
-if /i "!autostart_ask!"=="Y" (
-    call :setup_autostart "4"
-    echo ✅ Метод 4 добавлен в автозапуск!
-) else (
-    call :remove_autostart_silent
-    echo ℹ️ Автозапуск не настроен.
-)
-timeout /t 1 >nul
-call :stop_silent
-timeout /t 1 >nul
-call :launch_method_direct "tishe\naebalovo_lightning_gamer.bat" "Молния геймера"
-goto main
-
-:launch_method_5
-cls
-echo.
-echo 🚜 Запускаем турбо чайник...
-echo.
-set /p autostart_ask="🎯 Добавить этот метод в автозапуск? (Y/N): "
-if /i "!autostart_ask!"=="Y" (
-    call :setup_autostart "5"
-    echo ✅ Метод 5 добавлен в автозапуск!
-) else (
-    call :remove_autostart_silent
-    echo ℹ️ Автозапуск не настроен.
-)
-timeout /t 1 >nul
-call :stop_silent
-timeout /t 1 >nul
-call :launch_method_direct "tishe\naebalovo_turbo_chaynik.bat" "Турбо чайник"
-goto main
 
 :launch_quantum_naebalovo
 cls
@@ -350,7 +341,7 @@ for /l %%i in (0,1,30) do (
 
 echo.
 echo.
-echo 🚀 Возвращаемся к реальным функциям...
+echo 🚀 Возвращаемся к реальным функции...
 timeout /t 3 >nul
 goto main
 
@@ -572,14 +563,24 @@ goto autostart_menu
 :reinstall_autostart
 echo.
 echo 🔧 Переустанавливаем автозапуск...
-call :remove_autostart_silent
-timeout /t 1 >nul
+
+:: 🔥 ВАЖНО: Сначала читаем сохраненный метод
 if exist "tools\autostart_config.txt" (
     set /p autostart_method=<tools\autostart_config.txt
+    echo 📄 Найден сохраненный метод: !autostart_method!
+    
+    :: Теперь удаляем старый автозапуск
+    echo 🗑️  Удаляем старые задачи...
+    call :remove_autostart_silent
+    
+    :: И настраиваем заново
+    timeout /t 1 >nul
+    echo 🔄 Настраиваем автозапуск заново...
     call :setup_autostart "!autostart_method!"
 ) else (
     echo ❌ Нет сохраненной конфигурации автозапуска!
-    timeout /t 2 >nul
+    echo 💡 Сначала настройте автозапуск через меню (опция 4 → опция 1)
+    timeout /t 3 >nul
 )
 goto autostart_menu
 
@@ -593,12 +594,23 @@ goto autostart_menu
 
 :remove_autostart_silent
 schtasks /delete /tn "NaebalovoAutostart" /f >nul 2>&1
-if exist "tools\autostart_config.txt" del "tools\autostart_config.txt" >nul 2>&1
+schtasks /delete /tn "NAEBALOVO_Stealth_Startup" /f >nul 2>&1
+schtasks /delete /tn "NAEBALOVO_Simple_Startup" /f >nul 2>&1
+schtasks /delete /tn "NAEBALOVO_AutoStart" /f >nul 2>&1
+schtasks /delete /tn "NAEBALOVO_UserStart" /f >nul 2>&1
+schtasks /delete /tn "NAEBALOVO_Simple" /f >nul 2>&1
+
+:: 🔥 НЕ УДАЛЯЕМ autostart_config.txt - он нужен для переустановки!
+
+if exist "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\*naebalovo*.vbs" (
+    del "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\*naebalovo*.vbs" >nul 2>&1
+)
 goto :eof
 
 :setup_autostart
 set "method_number=%~1"
-set "script_path=%~dp0NAEBALOVO.bat"
+set "script_path=%~f0"
+set "script_dir=%~dp0"
 
 :: Удаляем старый автозапуск
 call :remove_autostart_silent
@@ -606,49 +618,162 @@ call :remove_autostart_silent
 echo.
 echo 🚀 Настраиваем автозапуск метода !method_number!...
 
-:: Создаем задание в планировщике задач
-schtasks /create /tn "NaebalovoAutostart" /tr "\"%script_path%\" --autostart" /sc onlogon /rl highest /f >nul 2>&1
+:: 🔥 СОХРАНЯЕМ КОНФИГУРАЦИЮ
+echo !method_number! > "tools\autostart_config.txt"
+echo 📁 Файл конфигурации сохранен: tools\autostart_config.txt
+
+:: 🔥 УПРОЩЕННЫЙ МЕТОД: Создаем простую задачу
+set "cmd=cmd /c \"\"!script_path!\" --autostart-hidden\""
+
+echo 📅 Создаем задание в Планировщике задач...
+echo ❗ Имя задачи: NAEBALOVO_AutoStart
+echo ⚡ При запуске: БЕЗ ОКОН, БЕЗ УВЕДОМЛЕНИЙ
+
+:: Способ 1: Создаем задачу для SYSTEM (самый надежный)
+schtasks /create /tn "NAEBALOVO_AutoStart" /tr "!cmd!" /sc onlogon /ru "SYSTEM" /rl highest /f >nul 2>&1
 
 if %errorlevel% equ 0 (
-    echo !method_number! > tools\autostart_config.txt
-    echo ✅ Автозапуск успешно настроен!
-    echo 📅 Naebalovo будет запускаться при входе в Windows
+    echo ✅ Задание успешно создано!
+    echo 📅 Имя: NAEBALOVO_AutoStart
+    echo 🔒 Прав: SYSTEM (максимальные)
+    echo 🚀 Действие: Запуск при входе любого пользователя
+    echo ⚡ Скрытость: Запуск без окон
+    
+    :: Проверяем создание
+    timeout /t 2 >nul
+    schtasks /query /tn "NAEBALOVO_AutoStart" >nul 2>&1
+    if %errorlevel% equ 0 (
+        echo 🧪 Проверка: Задание существует и активно
+    ) else (
+        echo ⚠️  Задание не найдено после создания
+        goto :setup_autostart_alternative
+    )
 ) else (
-    echo ❌ Ошибка настройки автозапуска!
-    echo 💡 Проверь права администратора
+    echo ❌ Ошибка создания задания SYSTEM!
+    goto :setup_autostart_alternative
 )
-timeout /t 2 >nul
+
+goto :setup_autostart_finish
+
+:setup_autostart_alternative
+echo.
+echo 🔄 Пробуем альтернативный метод (текущий пользователь)...
+set "cmd_alt=cmd /c \"cd /d \"!script_dir!\" && \"!script_path!\" --autostart-hidden\""
+schtasks /create /tn "NAEBALOVO_UserStart" /tr "!cmd_alt!" /sc onlogon /ru "%USERNAME%" /rl highest /f >nul 2>&1
+
+if %errorlevel% equ 0 (
+    echo ✅ Альтернативное задание создано!
+    echo 📅 Имя: NAEBALOVO_UserStart
+    echo 👤 Пользователь: %USERNAME%
+    echo ⚡ Скрытость: Запуск без окон
+) else (
+    echo ❌ Не удалось создать автозапуск!
+    echo 💡 Пробуем самый простой способ...
+    
+    :: Простейший способ для текущего пользователя
+    set "simple_cmd=\"""%script_path%"\" --autostart-hidden"
+    schtasks /create /tn "NAEBALOVO_Simple" /tr "!simple_cmd!" /sc onlogon /f >nul 2>&1
+    if %errorlevel% equ 0 (
+        echo ✅ Простое задание создано!
+    ) else (
+        echo ❌ Не удалось создать автозапуск!
+        echo 💡 Попробуйте запустить Планировщик задач вручную
+    )
+)
+
+:setup_autostart_finish
+:: ВСЕГДА удаляем VBS из автозагрузки
+if exist "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\*naebalovo*.vbs" (
+    del "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\*naebalovo*.vbs" >nul 2>&1
+    echo ✅ Удалены старые VBS скрипты
+)
+
+echo.
+echo 🔧 АВТОЗАПУСК НАСТРОЕН!
+echo ⚡ Используется: Планировщик задач Windows
+echo 💀 VBS СКРИПТЫ НЕ ИСПОЛЬЗУЮТСЯ!
+echo ⏱️  Возвращаемся в меню через 3 секунды...
+timeout /t 3 >nul
 goto :eof
 
-:autostart_launch
-echo.
-echo 🔥 ЗАПУСК АВТОЗАПУСКА NAEBALOVO!
-echo 🎯 Метод: !autostart_method!
-timeout /t 2 >nul
+:autostart_launch_hidden
+:: 🔥 КРИТИЧНО ВАЖНО: Убедимся что мы в правильной директории
+cd /d "%ROOT_DIR%"
+
+:: 📝 Пишем в лог файл
+echo [%date% %time%] [AUTOSTART] Запуск NAEBALOVO >> "tools\autostart.log" 2>nul
 
 :: Останавливаем все запущенные методы
-call :stop_silent
+call :stop_silent_hidden
 
-if "!autostart_method!"=="1" (
-    call "%ROOT_DIR%tishe\naebalovo_ninja_stealth.bat"
-) else if "!autostart_method!"=="2" (
-    call "%ROOT_DIR%tishe\naebalovo_ultra_split_hacker.bat"
-) else if "!autostart_method!"=="3" (
-    call "%ROOT_DIR%tishe\naebalovo_mega_fake_guru.bat"
-) else if "!autostart_method!"=="4" (
-    call "%ROOT_DIR%tishe\naebalovo_lightning_gamer.bat"
-) else if "!autostart_method!"=="5" (
-    call "%ROOT_DIR%tishe\naebalovo_turbo_chaynik.bat"
+:: 🔥 УЛУЧШЕННАЯ ПРОВЕРКА КОНФИГА
+if exist "tools\autostart_config.txt" (
+    set /p autostart_method=<tools\autostart_config.txt
+    echo [%date% %time%] [AUTOSTART] Метод: !autostart_method! >> "tools\autostart.log" 2>nul
+    
+    :: Проверяем что метод валидный
+    if "!autostart_method!"=="" (
+        echo [%date% %time%] [AUTOSTART] Ошибка: пустой метод! >> "tools\autostart.log" 2>nul
+        exit /b 1
+    )
 ) else (
-    echo ❌ Неизвестный метод автозапуска: !autostart_method!
-    timeout /t 3 >nul
+    echo [%date% %time%] [AUTOSTART] Ошибка: конфиг не найден! >> "tools\autostart.log" 2>nul
     exit /b 1
 )
 
-echo ✅ Автозапуск выполнен успешно!
-echo 🕵️  Naebalovo работает в скрытом режиме
-timeout /t 3 >nul
+:: 🔥 ПРОСТОЙ И НАДЕЖНЫЙ ЗАПУСК ЧЕРЕЗ START /B
+echo [%date% %time%] [AUTOSTART] Запускаем метод !autostart_method!... >> "tools\autostart.log" 2>nul
+
+set "method_file="
+
+if "!autostart_method!"=="1" set "method_file=tishe\naebalovo_ninja_stealth.bat"
+if "!autostart_method!"=="2" set "method_file=tishe\naebalovo_ultra_split_hacker.bat"
+if "!autostart_method!"=="3" set "method_file=tishe\naebalovo_mega_fake_guru.bat"
+if "!autostart_method!"=="4" set "method_file=tishe\naebalovo_lightning_gamer.bat"
+if "!autostart_method!"=="5" set "method_file=tishe\naebalovo_turbo_chaynik.bat"
+
+if "!method_file!"=="" (
+    echo [%date% %time%] [AUTOSTART] Ошибка: неизвестный метод !autostart_method! >> "tools\autostart.log" 2>nul
+    exit /b 1
+)
+
+if not exist "!method_file!" (
+    echo [%date% %time%] [AUTOSTART] Ошибка: файл !method_file! не найден >> "tools\autostart.log" 2>nul
+    exit /b 1
+)
+
+:: 🔥 ЗАПУСКАЕМ ЧЕРЕЗ START /B (самый надежный способ)
+cd /d "%ROOT_DIR%"
+start "NAEBALOVO_Auto" /B cmd /c "call \"!method_file!\""
+
+echo [%date% %time%] [AUTOSTART] Файл !method_file! запущен >> "tools\autostart.log" 2>nul
+
+:: Ждем и проверяем
+timeout /t 15 >nul
+
+:: Проверяем запустился ли процесс winws.exe
+tasklist /fi "imagename eq winws.exe" | find /i "winws.exe" >nul
+if errorlevel 1 (
+    echo [%date% %time%] [AUTOSTART] Предупреждение: winws.exe не обнаружен >> "tools\autostart.log" 2>nul
+    :: Пробуем запустить напрямую winws.exe
+    cd /d "%ROOT_DIR%\core\Uberi_Ruki"
+    start "NAEBALOVO_Direct" /B winws.exe --filter-tcp=443 --dpi-desync=fake --new
+    echo [%date% %time%] [AUTOSTART] Прямой запуск winws.exe >> "tools\autostart.log" 2>nul
+) else (
+    echo [%date% %time%] [AUTOSTART] Успех: winws.exe запущен и работает >> "tools\autostart.log" 2>nul
+)
+
 exit /b 0
+
+:stop_silent_hidden
+:: Скрытая остановка без вывода сообщений
+taskkill /f /im winws.exe >nul 2>&1
+timeout /t 1 >nul
+tasklist /fi "imagename eq winws.exe" | find /i "winws.exe" >nul
+if %errorlevel%==0 (
+    taskkill /f /fi "imagename eq winws.exe" >nul 2>&1
+)
+goto :eof
 
 :stop
 cls
@@ -686,42 +811,53 @@ echo ✅ Все процессы обхода остановлены!
 
 :: 2. Удаление автозапуска
 echo 🗑️  Шаг 2: Удаляем автозапуск из системы...
-schtasks /delete /tn "NaebalovoAutostart" /f >nul 2>&1
+call :remove_autostart_silent
+
+:: Удаляем конфиг автозапуска
 if exist "tools\autostart_config.txt" (
     del "tools\autostart_config.txt" >nul 2>&1
-    echo ✅ Автозапуск удален из планировщика задач
+    echo ✅ Конфиг автозапуска удален
 ) else (
-    echo ℹ️  Автозапуск не был настроен
+    echo ℹ️ Конфиг автозапуска не найден
+)
+
+:: Удаляем из реестра
+reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "Naebalovo" /f >nul 2>&1
+
+:: Удаляем VBS из автозагрузки
+if exist "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\*naebalovo*.vbs" (
+    del "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\*naebalovo*.vbs" >nul 2>&1
+    echo ✅ Ярлык автозагрузки удален
 )
 
 :: 3. Очистка временных файлов и кэша
 echo 🧹 Шаг 3: Очищаем временные файлы и следы...
 
 :: PID файлы
-if exist "..\tishe\ninja_pid.txt" (
-    del "..\tishe\ninja_pid.txt" >nul 2>&1
-    echo ✅ Удален PID файл
+if exist "tishe\*.pid" (
+    del "tishe\*.pid" >nul 2>&1
+    echo ✅ Удалены PID файлы
 )
 
 :: Временные VBS скрипты
-if exist "..\tishe\*.vbs" (
-    del "..\tishe\*.vbs" >nul 2>&1
+if exist "tishe\*.vbs" (
+    del "tishe\*.vbs" >nul 2>&1
     echo ✅ Удалены временные VBS скрипты
 )
 
-:: Временные BAT файлы в Uberi_Ruki
-if exist "..\core\Uberi_Ruki\temp*.bat" (
-    del "..\core\Uberi_Ruki\temp*.bat" >nul 2>&1
+:: Временные BAT файлы
+if exist "core\Uberi_Ruki\*_temp.bat" (
+    del "core\Uberi_Ruki\*_temp.bat" >nul 2>&1
     echo ✅ Удалены временные BAT файлы
 )
 
-:: Временные BAT файлы в корне
+:: Временные файлы в корне
 if exist "*.vbs" del "*.vbs" >nul 2>&1
 if exist "*_temp.bat" del "*_temp.bat" >nul 2>&1
 
 :: Лог файлы
-if exist "..\core\Uberi_Ruki\*.log" (
-    del "..\core\Uberi_Ruki\*.log" >nul 2>&1
+if exist "core\Uberi_Ruki\*.log" (
+    del "core\Uberi_Ruki\*.log" >nul 2>&1
     echo ✅ Удалены лог файлы
 )
 
